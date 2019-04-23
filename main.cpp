@@ -39,15 +39,9 @@ public:
 
 	void draw();
 	void collision(Ball&); //Checks if the brick is colliding with the ball and if so it destroys the brick and reflects the ball
-<<<<<<< HEAD
     void setPos(float, float);
 
 	Brick(); //We need this so we can make an array
-=======
-
-	Brick(); //We need this so we can make an array
-	Brick(float, float); //Easily create the brick by passing the x and y value of where the center of the brick is.
->>>>>>> 42952df2838db64177e24baf2d2729248cc53986
 };
 
 Brick::Brick() {
@@ -55,7 +49,6 @@ Brick::Brick() {
 	PosY = 0;
 }
 
-<<<<<<< HEAD
 void Brick::setPos(float x, float y) {
 	PosX = x;
 	PosY = y;
@@ -167,12 +160,6 @@ Brick brickObj[3][10];
 //Ball
 
 Ball ballObj = Ball(screenWidth/2, screenHeight/2, 0,-1);
-=======
-Brick::Brick(float x, float y) {
-	PosX = x;
-	PosY = y;
-}
->>>>>>> 42952df2838db64177e24baf2d2729248cc53986
 
 //<<<<<<<<<<<<<<<<<<<<<<< myInit >>>>>>>>>>>>>>>>>>>>
 void myInit(void)
@@ -196,7 +183,6 @@ glClear(GL_COLOR_BUFFER_BIT);     // clear the screen
 
 cout<<brickObj[1][5].PosX;
 
-<<<<<<< HEAD
 for(int i= 0; i<3; i++)
     for(int j=0; j<10; j++)
         brickObj[i][j].draw();
@@ -211,8 +197,6 @@ for(int i= 0; i<3; i++)
 if(ballObj.PosY>=screenHeight)
     ballObj.bounce(1,0);
 
-=======
->>>>>>> 42952df2838db64177e24baf2d2729248cc53986
 glutSwapBuffers();
 glFlush();                 // send all output to display
 }
@@ -232,104 +216,3 @@ glutMainLoop();      // go into a perpetual loop
 return 0;
 }
 
-<<<<<<< HEAD
-=======
-void Brick::collision(Ball &ball) {
-	if (isDestroy == false) {
-		float corner[4][2];
-
-		corner[0][0] = PosX - width / 2;
-		corner[0][1] = PosY - height / 2;
-
-		corner[1][0] = PosX - width / 2;
-		corner[1][1] = PosY + height / 2;
-
-		corner[2][0] = PosX + width / 2;
-		corner[2][1] = PosY + height / 2;
-
-		corner[3][0] = PosX + width / 2;
-		corner[3][1] = PosY - height / 2;
-
-		float minimum = 2 * ball.radius;
-
-		float normVector[2];
-
-		for (int i = 0; i < 4; i++) {
-			double vector[2];
-
-			vector[0] = corner[(i + 1) % 4][0] - corner[i][0];
-			vector[1] = corner[(i + 1) % 4][1] - corner[i][1];
-
-			double t = (ball.PosX*vector[0]+ball.PosY*vector[1] - corner[i][0]*vector[0]-corner[i][1]*vector[1]) / (vector[0] * vector[0] + vector[1] * vector[1]);
-			float nearestPoint[2];
-
-			nearestPoint[0] = corner[i][0] + t * vector[0];
-			nearestPoint[1] = corner[i][1] + t * vector[1];
-
-			float perpVector[2];
-
-			perpVector[0] = nearestPoint[0] - ball.PosX;
-			perpVector[1] = nearestPoint[1] - ball.PosY;
-
-			float distance = sqrt(perpVector[0] * perpVector[0] + perpVector[1] * perpVector[1]);
-
-			if (distance < minimum && t<=1 && t>=0) {
-				minimum = distance;
-				normVector[0] = perpVector[0];
-				normVector[1] = perpVector[1];
-			}
-		}
-
-		if (minimum <= ball.radius) {
-
-			ball.VelX = ball.VelX - 2 * (ball.VelX*normVector[0] + ball.VelY * normVector[1])*normVector[0] / (normVector[1] * normVector[1] + normVector[0] * normVector[0]);
-			ball.VelY = ball.VelY - 2 * (ball.VelX*normVector[0] + ball.VelY * normVector[1])*normVector[1] / (normVector[1] * normVector[1] + normVector[0] * normVector[0]);
-
-			cout << ball.VelY;
-
-			isDestroy = !isDestroy;
-		}
-	}
-}
-
-void Ball::bounce(float x, float y) {
-	float normX = -y;
-	float normY = x;
-
-	VelX = VelX - 2 * (VelX*normX + VelY * normY)*normX;
-	VelY = VelY - 2 * (VelX*normX + VelY * normY)*normY;
-}
-
-void Ball::draw(){
-	glColor3f(1.0, 0, 0);
-
-	glBegin(GL_POLYGON);
-	for (float t = 0; t < 1; t+=0.05) {
-		glVertex2i(PosX + radius * cos(2 * 3.141592*t), PosY + radius * sin(2 * 3.141592*t));
-	}
-	glEnd();
-}
-
-void Brick::draw() {
-	if (isDestroy == false) {
-		glBegin(GL_QUADS);
-		glVertex2i(PosX + width / 2, PosY + height / 2);
-		glVertex2i(PosX + width / 2, PosY - height / 2);
-		glVertex2i(PosX - width / 2, PosY - height / 2);
-		glVertex2i(PosX - width / 2, PosY + height / 2);
-		glEnd();
-		glutPostRedisplay();
-	}
-	else {
-
-	}
-}
-
-void Ball::move() {
-	PosX = PosX + VelX;
-	PosY += VelY;
-	
-	draw();
-	glutPostRedisplay();
-}
->>>>>>> 42952df2838db64177e24baf2d2729248cc53986
