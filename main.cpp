@@ -6,6 +6,11 @@
 #include <cmath>
 #include <ctime>
 
+#define lvl1 1
+#define lvl2 2
+#define lvl3 3
+
+
 using namespace std;
 
 const int screenWidth = 800;
@@ -184,6 +189,7 @@ void Ball::move() {
 void myDisplay(void);
 void myKeyboard(unsigned char key, int x, int y);
 void myInit(void);
+void processMenuEvents(int);
 
 //Ball
 
@@ -200,6 +206,12 @@ glutInitWindowPosition(100, 100); // set window position on screen
 glutCreateWindow("Acne BreakOut"); // open the screen window
 glutDisplayFunc(myDisplay);     // register redraw function
 glutKeyboardFunc(myKeyboard);
+glutCreateMenu(processMenuEvents);
+	glutAddMenuEntry("Level 1", lvl1);
+	glutAddMenuEntry("Level 2", lvl2);
+	glutAddMenuEntry("Level 3", lvl3);
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
+
 myInit();
 glutMainLoop();      // go into a perpetual loop
 
@@ -237,19 +249,23 @@ for(int i = 0; i<row; i++)
         brickObj[i][j].setPos(50+70*j,screenHeight/2+40*i+100);
 
 }
+void processMenuEvents(int option )
+ {
+	 switch (option)
+	 {
+	 case lvl1: ; break;
+	 case lvl2: ; break;
+	 case lvl3: ; break;
+	 }
+ }
 
-//<<<<<<<<<<<<<<<<<<<<<<<< myDisplay >>>>>>>>>>>>>>>>>
 void myDisplay(void)
 {
-//viewport for the bar
 glClear(GL_COLOR_BUFFER_BIT);     // clear the screen
 
 glColor3d(1.0, 0.0, 1.0);
 
-//if(barX1>=screenWidth){
-//    barX1=screenWidth-60; barX2=screenWidth-60; barY1=screenWidth; barY2=screenWidth;
-//}
-
+/// draw the bar
 glBegin(GL_QUADS);
 	glVertex2i(moveHX, 30);
 	glVertex2i(moveHX, 20);
@@ -282,7 +298,7 @@ if(ballObj.PosX>=screenWidth)
 if(ballObj.PosX<=0)
     ballObj.bounce(0,1);
 
-///ball object bouncing off the bar, still needs some work
+///ball object bouncing off the bar
 if(ballObj.PosX+ballObj.radius/2>moveHX && ballObj.PosX-ballObj.radius/2<moveHX+100 && ballObj.PosY-ballObj.radius<=30){
         ballObj.PosY = 30+ballObj.radius;
         ballObj.bounce(1,0);
