@@ -4,15 +4,20 @@
 #include <gl/Gl.h>
 #include <gl/glut.h>
 #include <cmath>
+#include <ctime>
 
 using namespace std;
 
 const int screenWidth = 800;
 const int screenHeight = 600;
+int moveHX =screenWidth/2;
+double speed = 0.5;
+
+int const row = 5, col = 11;
 
 class Ball {
 public:
-	float PosX, PosY, VelX, VelY;
+	double PosX, PosY, VelX, VelY;
 	float radius = 10; //Feel free to play around with the radius of the ball
 	float color[3]; //Useless for now
 
@@ -46,7 +51,10 @@ public:
 
 Brick::Brick() {
 	PosX = 0;
-	PosY = 0;
+	PosY = screenHeight/2+10;
+    color[0] = (rand()%255)/255.0;
+    color[1] = (rand()%255)/255.0;
+    color[2] = (rand()%255)/255.0;
 }
 
 void Brick::setPos(float x, float y) {
@@ -103,10 +111,22 @@ void Brick::collision(Ball &ball) {
 
 		if (minimum <= ball.radius) {
 
+            if(speed<=.75){
+                speed+=0.05;
+            }
+
 			ball.VelX = ball.VelX - 2 * (ball.VelX*normVector[0] + ball.VelY * normVector[1])*normVector[0] / (normVector[1] * normVector[1] + normVector[0] * normVector[0]);
 			ball.VelY = ball.VelY - 2 * (ball.VelX*normVector[0] + ball.VelY * normVector[1])*normVector[1] / (normVector[1] * normVector[1] + normVector[0] * normVector[0]);
+            ball.color[0] = color[0];
+            ball.color[1] = color[1];
+            ball.color[2] = color[2];
 
-			cout << ball.VelY;
+            double ballspeed;
+
+            ballspeed = pow(ball.VelX*ball.VelX + ball.VelY*ball.VelY,0.5);
+
+            ball.VelX = ball.VelX/ballspeed * speed;
+            ball.VelY = ball.VelY/ballspeed * speed;
 
 			isDestroy = !isDestroy;
 		}
@@ -119,13 +139,20 @@ void Ball::bounce(float x, float y) {
 
 	VelX = VelX - 2 * (VelX*normX + VelY * normY)*normX / (normX*normX+normY*normY);
 	VelY = VelY - 2 * (VelX*normX + VelY * normY)*normY/ (normX*normX+normY*normY);
+
+	double ballspeed;
+
+    ballspeed = pow(VelX*VelX + VelY*VelY,0.5);
+
+    VelX = VelX/ballspeed * speed;
+    VelY = VelY/ballspeed * speed;
 }
 
 void Ball::draw(){
-	glColor3f(1.0, 0, 0);
+	glColor3f(color[0], color[1], color[2]);
 
 	glBegin(GL_POLYGON);
-	for (float t = 0; t < 1; t+=0.25) {
+	for (float t = 0; t < 1; t+=0.05) {
 		glVertex2i(PosX + radius * cos(2 * 3.141592*t), PosY + radius * sin(2 * 3.141592*t));
 	}
 	glEnd();
@@ -133,6 +160,7 @@ void Ball::draw(){
 
 void Brick::draw() {
 	if (isDestroy == false) {
+        glColor3f(color[0],color[1],color[2]);
 		glBegin(GL_QUADS);
 		glVertex2i(PosX + width / 2, PosY + height / 2);
 		glVertex2i(PosX + width / 2, PosY - height / 2);
@@ -153,13 +181,34 @@ void Ball::move() {
 	glutPostRedisplay();
 }
 
-//Bricks
-
-Brick brickObj[3][10];
+void myDisplay(void);
+void myKeyboard(unsigned char key, int x, int y);
+void myInit(void);
 
 //Ball
 
-Ball ballObj = Ball(screenWidth/2, screenHeight/2, 0,-1);
+Ball ballObj = Ball(screenWidth/2, screenHeight/2, 0.1,-0.9949);
+
+//<<<<<<<<<<<<<<<<<<<<<<<< main >>>>>>>>>>>>>>>>>>>>>>
+int  main(int argc, char** argv)
+{
+srand(time(0));
+glutInit(&argc, argv);          // initialize the toolkit
+glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB); // set display mode
+glutInitWindowSize(screenWidth,screenHeight);     // set window size
+glutInitWindowPosition(100, 100); // set window position on screen
+glutCreateWindow("Acne BreakOut"); // open the screen window
+glutDisplayFunc(myDisplay);     // register redraw function
+glutKeyboardFunc(myKeyboard);
+myInit();
+glutMainLoop();      // go into a perpetual loop
+
+
+return 0;
+}
+
+//Bricks
+Brick brickObj[row][col];
 
 //<<<<<<<<<<<<<<<<<<<<<<< myInit >>>>>>>>>>>>>>>>>>>>
 void myInit(void)
@@ -171,48 +220,93 @@ glMatrixMode(GL_PROJECTION);
 glLoadIdentity();
 gluOrtho2D(0.0, screenWidth, 0.0, screenHeight);
 
-for(int i = 0; i<3; i++)
-    for(int j = 0; j<10; j++)
-        brickObj[i][j].setPos(60+70*j,200+40*i);
+ballObj= Ball(screenWidth/2, screenHeight/2, 0.25,-0.75);
+
+double ballspeed;
+ballspeed = pow(ballObj.VelX*ballObj.VelX + ballObj.VelY*ballObj.VelY,0.5);
+
+ballObj.VelX = ballObj.VelX/ballspeed * speed;
+ballObj.VelY = ballObj.VelY/ballspeed * speed;
+
+for(int i = 0; i<row; i++)
+    for(int j = 0; j<col; j++)
+        brickObj[i][j]= Brick();
+
+for(int i = 0; i<row; i++)
+    for(int j = 0; j<col; j++)
+        brickObj[i][j].setPos(50+70*j,screenHeight/2+40*i+100);
+
 }
+
 //<<<<<<<<<<<<<<<<<<<<<<<< myDisplay >>>>>>>>>>>>>>>>>
 void myDisplay(void)
 {
 //viewport for the bar
 glClear(GL_COLOR_BUFFER_BIT);     // clear the screen
 
-cout<<brickObj[1][5].PosX;
+glColor3d(1.0, 0.0, 1.0);
 
-for(int i= 0; i<3; i++)
-    for(int j=0; j<10; j++)
+//if(barX1>=screenWidth){
+//    barX1=screenWidth-60; barX2=screenWidth-60; barY1=screenWidth; barY2=screenWidth;
+//}
+
+glBegin(GL_QUADS);
+	glVertex2i(moveHX, 30);
+	glVertex2i(moveHX, 20);
+	glVertex2i(moveHX+100, 20);
+	glVertex2i(moveHX+100, 30);
+glEnd();
+
+for(int i= 0; i<row; i++)
+    for(int j=0; j<col; j++)
         brickObj[i][j].draw();
 
 ballObj.move();
 
-for(int i= 0; i<3; i++)
-    for(int j=0; j<10; j++)
+for(int i= 0; i<row; i++)
+    for(int j=0; j<col; j++)
         brickObj[i][j].collision(ballObj);
-
 
 if(ballObj.PosY>=screenHeight)
     ballObj.bounce(1,0);
+if(ballObj.PosY<=15){
+    ballObj.PosX = screenWidth/2;
+    ballObj.PosY = screenHeight/2;
+    ballObj.VelX = 0;
+    ballObj.VelY = 0;
+
+}
+
+if(ballObj.PosX>=screenWidth)
+    ballObj.bounce(0,1);
+if(ballObj.PosX<=0)
+    ballObj.bounce(0,1);
+
+///ball object bouncing off the bar, still needs some work
+if(ballObj.PosX+ballObj.radius/2>moveHX && ballObj.PosX-ballObj.radius/2<moveHX+100 && ballObj.PosY-ballObj.radius<=30){
+        ballObj.PosY = 30+ballObj.radius;
+        ballObj.bounce(1,0);
+}
+
 
 glutSwapBuffers();
 glFlush();                 // send all output to display
 }
 
-//<<<<<<<<<<<<<<<<<<<<<<<< main >>>>>>>>>>>>>>>>>>>>>>
-int  main(int argc, char** argv)
-{
-glutInit(&argc, argv);          // initialize the toolkit
-glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB); // set display mode
-glutInitWindowSize(screenWidth,screenHeight);     // set window size
-glutInitWindowPosition(100, 100); // set window position on screen
-glutCreateWindow("Acne BreakOut"); // open the screen window
-glutDisplayFunc(myDisplay);     // register redraw function
-myInit();
-glutMainLoop();      // go into a perpetual loop
+void myKeyboard(unsigned char key, int x, int y)
+{	// pan the viewport
+	if (key == 'a' && moveHX>=0)
+	{
+		moveHX = moveHX - 50;
+	}
 
-return 0;
+	if (key == 'd' && moveHX<=screenWidth-100)
+	{
+		moveHX = moveHX + 50;
+	}
+
+	if(key == 'r'){
+        myInit();
+	}
+
 }
-
