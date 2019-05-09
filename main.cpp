@@ -18,13 +18,16 @@ const int screenHeight = 600;
 int moveHX =screenWidth/2;
 double speed = 0.5;
 
-int const row = 5, col = 11;
+int menupick=0;
+
+void LevelPick(int);
+int const row = 13, col = 11;
 
 class Ball {
 public:
 	double PosX, PosY, VelX, VelY;
-	float radius = 10; //Feel free to play around with the radius of the ball
-	float color[3]; //Useless for now
+	float radius = 10;
+	float color[3];
 
 	void draw(); //Dont use this function since its embedded into move();
 	void bounce(float, float); //pass a vector here
@@ -43,7 +46,7 @@ Ball::Ball(float pX, float pY, float vX, float vY) {
 class Brick {
 public:
 	float PosX, PosY;
-	float width = 60.0, height = 20.0; //Feel free to mess around with it
+	float width = 60.0, height = 20.0;
 	float color[3]; //Useless for now
 	bool isDestroy = false;
 
@@ -53,10 +56,9 @@ public:
 
 	Brick(); //We need this so we can make an array
 };
-
 Brick::Brick() {
 	PosX = 0;
-	PosY = screenHeight/2+10;
+	PosY = screenHeight/2-10;
     color[0] = (rand()%255)/255.0;
     color[1] = (rand()%255)/255.0;
     color[2] = (rand()%255)/255.0;
@@ -225,16 +227,18 @@ Brick brickObj[row][col];
 //<<<<<<<<<<<<<<<<<<<<<<< myInit >>>>>>>>>>>>>>>>>>>>
 void myInit(void)
 {
+
 glClearColor(1.0,1.0,1.0,0.0);       // set white background color
 glColor3f(0.0f, 0.0f, 0.0f);          // set the drawing color
-glPointSize(4.0);       // a ‘dot’ is 4 by 4 pixels
+glPointSize(4.0);
 glMatrixMode(GL_PROJECTION);
 glLoadIdentity();
 gluOrtho2D(0.0, screenWidth, 0.0, screenHeight);
 
-ballObj= Ball(screenWidth/2, screenHeight/2, 0.25,-0.75);
+ballObj= Ball(screenWidth/2, screenHeight/2-100, 0.25,-0.75);
 
 double ballspeed;
+
 ballspeed = pow(ballObj.VelX*ballObj.VelX + ballObj.VelY*ballObj.VelY,0.5);
 
 ballObj.VelX = ballObj.VelX/ballspeed * speed;
@@ -244,18 +248,43 @@ for(int i = 0; i<row; i++)
     for(int j = 0; j<col; j++)
         brickObj[i][j]= Brick();
 
-for(int i = 0; i<row; i++)
-    for(int j = 0; j<col; j++)
-        brickObj[i][j].setPos(50+70*j,screenHeight/2+40*i+100);
-
 }
+
+///Levels are drawn here, moved the drawing section here
 void processMenuEvents(int option )
  {
 	 switch (option)
 	 {
-	 case lvl1: ; break;
-	 case lvl2: ; break;
-	 case lvl3: ; break;
+	     case lvl1:
+	     for(int i = 0; i<row; i++)
+            for(int j = 0; j<col; j++)
+                brickObj[i][j].setPos(50+70*j,40*i+100); ///must fix here
+
+	     ///level 1
+        for(int i = 0; i<5; i++)
+            for(int j = 0; j<col; j++)
+                brickObj[i][j].isDestroy=true;
+        ///level 1 ends here ;
+        break;
+
+        case lvl2:
+            for(int i = 0; i<row; i++)
+                for(int j = 0; j<col; j++)
+                brickObj[i][j].setPos(50+70*j,40*i+100);
+            ///level H, level 2
+            for(int i = 0; i<4; i++)
+                for(int j = 3; j<8; j++)
+                brickObj[i][j].isDestroy=true;
+            for(int i = 12; i>8; i--)
+                for(int j = 3; j<8; j++)
+                brickObj[i][j].isDestroy=true ;
+        break;
+
+        case lvl3:
+	     for(int i = 0; i<row; i++)
+            for(int j = 0; j<col; j++)
+                brickObj[i][j].setPos(50+70*j,40*i+100);
+        break;
 	 }
  }
 
@@ -285,6 +314,7 @@ for(int i= 0; i<row; i++)
 
 if(ballObj.PosY>=screenHeight)
     ballObj.bounce(1,0);
+
 if(ballObj.PosY<=15){
     ballObj.PosX = screenWidth/2;
     ballObj.PosY = screenHeight/2;
