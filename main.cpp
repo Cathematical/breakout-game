@@ -18,7 +18,7 @@ const int screenHeight = 600;
 int moveHX =screenWidth/2;
 double speed = 0.5;
 
-int menupick=0;
+int menupick=1;
 
 void LevelPick(int);
 int const row = 13, col = 11;
@@ -235,7 +235,7 @@ glMatrixMode(GL_PROJECTION);
 glLoadIdentity();
 gluOrtho2D(0.0, screenWidth, 0.0, screenHeight);
 
-ballObj= Ball(screenWidth/2, screenHeight/2-100, 0.25,-0.75);
+ballObj= Ball(screenWidth/2, screenHeight/2, 0.25,-0.75);
 
 double ballspeed;
 
@@ -340,18 +340,18 @@ glFlush();                 // send all output to display
 }
 
 void myKeyboard(unsigned char key, int x, int y)
-{	// pan the viewport
-	if (key == 'a' && moveHX>=0)
+{
+	if (key == 'a' || key == 'A' && moveHX>=0)
 	{
 		moveHX = moveHX - 50;
 	}
 
-	if (key == 'd' && moveHX<=screenWidth-100)
+	if (key == 'd' || key == 'D' && moveHX<=screenWidth-100)
 	{
 		moveHX = moveHX + 50;
 	}
 
-	if(key == 'r'){
+	if(key == 'r' || key == 'R'){
         myInit();
 	}
 
