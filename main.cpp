@@ -18,7 +18,7 @@ const int screenHeight = 600;
 int moveHX =screenWidth/2;
 double speed = 0.5;
 
-int menupick=1;
+int menupick=3; ///change level here instead of menu
 
 void LevelPick(int);
 int const row = 13, col = 11;
@@ -195,7 +195,7 @@ void processMenuEvents(int);
 
 //Ball
 
-Ball ballObj = Ball(screenWidth/2, screenHeight/2, 0.1,-0.9949);
+Ball ballObj = Ball(screenWidth/2, 50, 0.1,-0.9949);
 
 //<<<<<<<<<<<<<<<<<<<<<<<< main >>>>>>>>>>>>>>>>>>>>>>
 int  main(int argc, char** argv)
@@ -235,7 +235,7 @@ glMatrixMode(GL_PROJECTION);
 glLoadIdentity();
 gluOrtho2D(0.0, screenWidth, 0.0, screenHeight);
 
-ballObj= Ball(screenWidth/2, screenHeight/2, 0.25,-0.75);
+ballObj= Ball(screenWidth/2, 50, 0.25,-0.75);
 
 double ballspeed;
 
@@ -248,6 +248,34 @@ for(int i = 0; i<row; i++)
     for(int j = 0; j<col; j++)
         brickObj[i][j]= Brick();
 
+if(menupick==1){
+      for(int i = 0; i<row; i++)
+            for(int j = 0; j<col; j++)
+                brickObj[i][j].setPos(50+70*j,40*i+100); ///must fix here
+
+	     ///level 1
+        for(int i = 0; i<5; i++)
+            for(int j = 0; j<col; j++)
+                brickObj[i][j].isDestroy=true;
+        ///level 1 ends here ;
+}
+else if(menupick==2){
+    for(int i = 0; i<row; i++)
+                for(int j = 0; j<col; j++)
+                brickObj[i][j].setPos(50+70*j,40*i+100);
+            ///level H, level 2
+            for(int i = 0; i<4; i++)
+                for(int j = 3; j<8; j++)
+                brickObj[i][j].isDestroy=true;
+            for(int i = 12; i>8; i--)
+                for(int j = 3; j<8; j++)
+                brickObj[i][j].isDestroy=true ;
+}
+else if(menupick==3){
+    for(int i = 0; i<row; i++)
+            for(int j = 0; j<col; j++)
+                brickObj[i][j].setPos(50+70*j,40*i+100);
+}
 }
 
 ///Levels are drawn here, moved the drawing section here
@@ -317,7 +345,7 @@ if(ballObj.PosY>=screenHeight)
 
 if(ballObj.PosY<=15){
     ballObj.PosX = screenWidth/2;
-    ballObj.PosY = screenHeight/2;
+    ballObj.PosY = 50;
     ballObj.VelX = 0;
     ballObj.VelY = 0;
 
