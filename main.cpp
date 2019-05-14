@@ -1,3 +1,6 @@
+/// Breakout game done by Mark U16104323 and Masa U15106191 ///
+/// the code can also be found at: https://github.com/nerdingitout/breakout-game ///
+
 #include <iostream>
 #include <windows.h>
 #include <math.h>
@@ -18,7 +21,7 @@ const int screenHeight = 600;
 int moveHX =screenWidth/2;
 double speed = 0.5;
 
-int menupick=3; ///change level here instead of menu
+int menupick=3; //change level here instead of menu
 
 void LevelPick(int);
 int const row = 13, col = 11;
@@ -47,7 +50,7 @@ class Brick {
 public:
 	float PosX, PosY;
 	float width = 60.0, height = 20.0;
-	float color[3]; //Useless for now
+	float color[3];
 	bool isDestroy = false;
 
 	void draw();
@@ -197,7 +200,6 @@ void processMenuEvents(int);
 
 Ball ballObj = Ball(screenWidth/2, 50, 0.1,-0.9949);
 
-//<<<<<<<<<<<<<<<<<<<<<<<< main >>>>>>>>>>>>>>>>>>>>>>
 int  main(int argc, char** argv)
 {
 srand(time(0));
@@ -224,7 +226,7 @@ return 0;
 //Bricks
 Brick brickObj[row][col];
 
-//<<<<<<<<<<<<<<<<<<<<<<< myInit >>>>>>>>>>>>>>>>>>>>
+
 void myInit(void)
 {
 
@@ -281,9 +283,10 @@ else if(menupick==3){
 ///Levels are drawn here, moved the drawing section here
 void processMenuEvents(int option )
  {
+	 myInit();
 	 switch (option)
 	 {
-	     case lvl1:
+	     case lvl3:
 	     for(int i = 0; i<row; i++)
             for(int j = 0; j<col; j++)
                 brickObj[i][j].setPos(50+70*j,40*i+100); ///must fix here
@@ -308,7 +311,7 @@ void processMenuEvents(int option )
                 brickObj[i][j].isDestroy=true ;
         break;
 
-        case lvl3:
+        case lvl1:
 	     for(int i = 0; i<row; i++)
             for(int j = 0; j<col; j++)
                 brickObj[i][j].setPos(50+70*j,40*i+100);
@@ -322,7 +325,7 @@ glClear(GL_COLOR_BUFFER_BIT);     // clear the screen
 
 glColor3d(1.0, 0.0, 1.0);
 
-/// draw the bar
+// draw the bar
 glBegin(GL_QUADS);
 	glVertex2i(moveHX, 30);
 	glVertex2i(moveHX, 20);
